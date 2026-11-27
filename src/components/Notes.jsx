@@ -72,9 +72,19 @@ async function handleSubmit(e) {
     }
 }
 
-const handleDelete = useCallback((id) => {
-    setNotes(notes.filter((note) => note.id !== id))
-}, [notes])
+const handleDelete = useCallback(async (id) => {
+    try {
+        const res = await fetch(API_URL + '/notes/' + id, {
+            method: 'DELETE',
+        })
+        if (!res.ok) {
+            throw new Error('The server answered ' + res.status)
+        }
+        setNotes((currentNotes) => currentNotes.filter((note) => note.id !== id))
+    } catch (err) {
+        setError(err.message)
+    }
+}, [])
 
 const visibleNotes = useMemo(() => {
     console.log('filtering')
